@@ -1,6 +1,6 @@
 # uhttpd
 
-An micro httpd with libmicrohttpd for WhosKPW3
+A micro httpd with `libmicrohttpd` for WhosKPW3
 
 ## Setup
 
@@ -12,6 +12,8 @@ $ sudo apt-get install libmicrohttpd-dev
 
 ```
 $ cc uhttpd.c -o uhttpd -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttpd
+-or-
+$ make
 ```
 
 ## Test
