@@ -17,7 +17,13 @@ $ cc uhttpd.c -o uhttpd -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttp
 ## Test
 
 ```
+# server
 $ ./uhttpd
+
+# client
+$ curl http://host_ip_or_name:8888
+$ curl http://host_ip_or_name:8888/get?key=abc
+$ curl http://host_ip_or_name:8888/set?key=abc&value=1234
 ```
 
 ## Reference
