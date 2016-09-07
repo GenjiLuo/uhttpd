@@ -13,19 +13,19 @@ $ sudo apt-get install libmicrohttpd-dev
 ```
 $ cc uhttpd.c -o uhttpd -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttpd
 -or-
-$ make
+$ make clean && make
 ```
 
 ## Test
 
 ```
 # server
-$ ./uhttpd
+$ ./uhttpd [port] (port default 8888)
 
 # client
 $ curl http://host_ip_or_name:8888
-$ curl http://host_ip_or_name:8888/get?key=abc
 $ curl http://host_ip_or_name:8888/set?key=abc&value=1234
+$ curl http://host_ip_or_name:8888/get?key=abc
 ```
 
 ## Reference
