@@ -8,7 +8,7 @@
 
 #include <microhttpd.h>
 
-#define PORT 8888
+#define DEFAULT_PORT     8888
 
 static char value_to_set[512];
 static char page_to_answer[2048];
@@ -72,13 +72,18 @@ int answer_to_connection (void *cls, struct MHD_Connection *connection,
 return ret;
 }
 
-int main ()
+int main (int argc, char ** argv)
 {
     struct MHD_Daemon *daemon;
+    uint16_t port = DEFAULT_PORT;
+
+    if (argc == 2 && atoi(argv[1])) {
+        port = atoi(argv[1]);
+    }
 
     snprintf(value_to_set, sizeof(value_to_set), "NOT_SET");
 
-    daemon = MHD_start_daemon (MHD_USE_SELECT_INTERNALLY, PORT, NULL, NULL,
+    daemon = MHD_start_daemon (MHD_USE_SELECT_INTERNALLY, port, NULL, NULL,
             &answer_to_connection, NULL, MHD_OPTION_END);
 
     if (NULL == daemon) {
