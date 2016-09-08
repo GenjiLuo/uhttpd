@@ -157,6 +157,26 @@ dump_request_cb(struct evhttp_request *req, void *arg)
 	evhttp_send_reply(req, 200, "OK", NULL);
 }
 
+
+/* Callback used for the /set URI */
+static void
+set_request_cb(struct evhttp_request *req, void *arg)
+{
+	dump_request(req);
+
+	evhttp_send_reply(req, 200, "OK", NULL);
+}
+
+/* Callback used for the /get URI */
+static void
+get_request_cb(struct evhttp_request *req, void *arg)
+{
+	dump_request(req);
+
+	evhttp_send_reply(req, 200, "OK", NULL);
+}
+
+
 /* This callback gets invoked when we get any http request that doesn't match
  * any other callback.  Like any evhttp server callback, it has a simple job:
  * it must eventually call evhttp_send_error() or evhttp_send_reply().
@@ -367,6 +387,9 @@ main(int argc, char **argv)
 
 	/* The /dump URI will dump all requests to stdout and say 200 ok. */
 	evhttp_set_cb(http, "/dump", dump_request_cb, NULL);
+
+	evhttp_set_cb(http, "/set", set_request_cb, NULL);
+	evhttp_set_cb(http, "/get", get_request_cb, NULL);
 
 	/* We want to accept arbitrary requests, so we need to set a "generic"
 	 * cb.  We can also add callbacks for specific paths. */
