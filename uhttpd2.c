@@ -1,9 +1,9 @@
-/*
-  A trivial static http webserver using Libevent's evhttp.
-
-  This is not the best code in the world, and it does some fairly stupid stuff
-  that you would never want to do in a production webserver. Caveat hackor!
-
+/**
+ * A trivial static http webserver using Libevent's evhttp.
+ *
+ * This is not the best code in the world, and it does some fairly stupid stuff
+ * that you would never want to do in a production webserver. Caveat hackor!
+ *
  */
 
 /* Compatibility for possible missing IPv6 declarations */
@@ -87,7 +87,7 @@ static const struct table_entry {
 };
 
 /* Try to guess a good content-type for 'path' */
-static const char *
+	static const char *
 guess_content_type(const char *path)
 {
 	const char *last_period, *extension;
@@ -107,7 +107,7 @@ not_found:
 
 /* Callback used for the /dump URI, and for every non-GET request:
  * dumps all information to stdout and gives back a trivial 200 ok */
-static void
+	static void
 dump_request_cb(struct evhttp_request *req, void *arg)
 {
 	const char *cmdtype;
@@ -116,24 +116,24 @@ dump_request_cb(struct evhttp_request *req, void *arg)
 	struct evbuffer *buf;
 
 	switch (evhttp_request_get_command(req)) {
-	case EVHTTP_REQ_GET: cmdtype = "GET"; break;
-	case EVHTTP_REQ_POST: cmdtype = "POST"; break;
-	case EVHTTP_REQ_HEAD: cmdtype = "HEAD"; break;
-	case EVHTTP_REQ_PUT: cmdtype = "PUT"; break;
-	case EVHTTP_REQ_DELETE: cmdtype = "DELETE"; break;
-	case EVHTTP_REQ_OPTIONS: cmdtype = "OPTIONS"; break;
-	case EVHTTP_REQ_TRACE: cmdtype = "TRACE"; break;
-	case EVHTTP_REQ_CONNECT: cmdtype = "CONNECT"; break;
-	case EVHTTP_REQ_PATCH: cmdtype = "PATCH"; break;
-	default: cmdtype = "unknown"; break;
+		case EVHTTP_REQ_GET: cmdtype = "GET"; break;
+		case EVHTTP_REQ_POST: cmdtype = "POST"; break;
+		case EVHTTP_REQ_HEAD: cmdtype = "HEAD"; break;
+		case EVHTTP_REQ_PUT: cmdtype = "PUT"; break;
+		case EVHTTP_REQ_DELETE: cmdtype = "DELETE"; break;
+		case EVHTTP_REQ_OPTIONS: cmdtype = "OPTIONS"; break;
+		case EVHTTP_REQ_TRACE: cmdtype = "TRACE"; break;
+		case EVHTTP_REQ_CONNECT: cmdtype = "CONNECT"; break;
+		case EVHTTP_REQ_PATCH: cmdtype = "PATCH"; break;
+		default: cmdtype = "unknown"; break;
 	}
 
 	printf("Received a %s request for %s\nHeaders:\n",
-	    cmdtype, evhttp_request_get_uri(req));
+			cmdtype, evhttp_request_get_uri(req));
 
 	headers = evhttp_request_get_input_headers(req);
 	for (header = headers->tqh_first; header;
-	    header = header->next.tqe_next) {
+			header = header->next.tqe_next) {
 		printf("  %s: %s\n", header->key, header->value);
 	}
 
@@ -155,7 +155,7 @@ dump_request_cb(struct evhttp_request *req, void *arg)
  * any other callback.  Like any evhttp server callback, it has a simple job:
  * it must eventually call evhttp_send_error() or evhttp_send_reply().
  */
-static void
+	static void
 send_document_cb(struct evhttp_request *req, void *arg)
 {
 	struct evbuffer *evb = NULL;
@@ -247,31 +247,31 @@ send_document_cb(struct evhttp_request *req, void *arg)
 #endif
 
 		evbuffer_add_printf(evb,
-                    "<!DOCTYPE html>\n"
-                    "<html>\n <head>\n"
-                    "  <meta charset='utf-8'>\n"
-		    "  <title>%s</title>\n"
-		    "  <base href='%s%s'>\n"
-		    " </head>\n"
-		    " <body>\n"
-		    "  <h1>%s</h1>\n"
-		    "  <ul>\n",
-		    decoded_path, /* XXX html-escape this. */
-		    path, /* XXX html-escape this? */
-		    trailing_slash,
-		    decoded_path /* XXX html-escape this */);
+				"<!DOCTYPE html>\n"
+				"<html>\n <head>\n"
+				"  <meta charset='utf-8'>\n"
+				"  <title>%s</title>\n"
+				"  <base href='%s%s'>\n"
+				" </head>\n"
+				" <body>\n"
+				"  <h1>%s</h1>\n"
+				"  <ul>\n",
+				decoded_path, /* XXX html-escape this. */
+				path, /* XXX html-escape this? */
+				trailing_slash,
+				decoded_path /* XXX html-escape this */);
 #ifdef _WIN32
 		do {
 			const char *name = ent.cFileName;
 #else
-		while ((ent = readdir(d))) {
-			const char *name = ent->d_name;
+			while ((ent = readdir(d))) {
+				const char *name = ent->d_name;
 #endif
-			evbuffer_add_printf(evb,
-			    "    <li><a href=\"%s\">%s</a>\n",
-			    name, name);/* XXX escape this */
+				evbuffer_add_printf(evb,
+						"    <li><a href=\"%s\">%s</a>\n",
+						name, name);/* XXX escape this */
 #ifdef _WIN32
-		} while (FindNextFileA(d, &ent));
+			} while (FindNextFileA(d, &ent));
 #else
 		}
 #endif
@@ -282,7 +282,7 @@ send_document_cb(struct evhttp_request *req, void *arg)
 		closedir(d);
 #endif
 		evhttp_add_header(evhttp_request_get_output_headers(req),
-		    "Content-Type", "text/html");
+				"Content-Type", "text/html");
 	} else {
 		/* Otherwise it's a file; add it to the buffer to get
 		 * sent via sendfile */
@@ -299,7 +299,7 @@ send_document_cb(struct evhttp_request *req, void *arg)
 			goto err;
 		}
 		evhttp_add_header(evhttp_request_get_output_headers(req),
-		    "Content-Type", type);
+				"Content-Type", type);
 		evbuffer_add_file(evb, fd, 0, st.st_size);
 	}
 
@@ -320,13 +320,13 @@ done:
 		evbuffer_free(evb);
 }
 
-static void
+	static void
 syntax(void)
 {
 	fprintf(stdout, "Syntax: http-server <docroot>\n");
 }
 
-int
+	int
 main(int argc, char **argv)
 {
 	struct event_base *base;
@@ -370,7 +370,7 @@ main(int argc, char **argv)
 	handle = evhttp_bind_socket_with_handle(http, "0.0.0.0", port);
 	if (!handle) {
 		fprintf(stderr, "couldn't bind to port %d. Exiting.\n",
-		    (int)port);
+				(int)port);
 		return 1;
 	}
 
@@ -397,15 +397,15 @@ main(int argc, char **argv)
 			inaddr = &((struct sockaddr_in6*)&ss)->sin6_addr;
 		} else {
 			fprintf(stderr, "Weird address family %d\n",
-			    ss.ss_family);
+					ss.ss_family);
 			return 1;
 		}
 		addr = evutil_inet_ntop(ss.ss_family, inaddr, addrbuf,
-		    sizeof(addrbuf));
+				sizeof(addrbuf));
 		if (addr) {
 			printf("Listening on %s:%d\n", addr, got_port);
 			evutil_snprintf(uri_root, sizeof(uri_root),
-			    "http://%s:%d",addr,got_port);
+					"http://%s:%d",addr,got_port);
 		} else {
 			fprintf(stderr, "evutil_inet_ntop failed\n");
 			return 1;
