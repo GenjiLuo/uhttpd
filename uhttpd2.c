@@ -87,7 +87,7 @@ static const struct table_entry {
 };
 
 /* Try to guess a good content-type for 'path' */
-	static const char *
+static const char *
 guess_content_type(const char *path)
 {
 	const char *last_period, *extension;
@@ -105,10 +105,8 @@ not_found:
 	return "application/misc";
 }
 
-/* Callback used for the /dump URI, and for every non-GET request:
- * dumps all information to stdout and gives back a trivial 200 ok */
-	static void
-dump_request_cb(struct evhttp_request *req, void *arg)
+static void
+dump_request(struct evhttp_request *req)
 {
 	const char *cmdtype;
 	struct evkeyvalq *headers;
@@ -147,6 +145,14 @@ dump_request_cb(struct evhttp_request *req, void *arg)
 			(void) fwrite(cbuf, 1, n, stdout);
 	}
 	puts(">>>");
+}
+
+/* Callback used for the /dump URI, and for every non-GET request:
+ * dumps all information to stdout and gives back a trivial 200 ok */
+static void
+dump_request_cb(struct evhttp_request *req, void *arg)
+{
+	dump_request(req);
 
 	evhttp_send_reply(req, 200, "OK", NULL);
 }
@@ -155,7 +161,7 @@ dump_request_cb(struct evhttp_request *req, void *arg)
  * any other callback.  Like any evhttp server callback, it has a simple job:
  * it must eventually call evhttp_send_error() or evhttp_send_reply().
  */
-	static void
+static void
 send_document_cb(struct evhttp_request *req, void *arg)
 {
 	struct evbuffer *evb = NULL;
@@ -320,13 +326,13 @@ done:
 		evbuffer_free(evb);
 }
 
-	static void
+static void
 syntax(void)
 {
 	fprintf(stdout, "Syntax: http-server <docroot>\n");
 }
 
-	int
+int
 main(int argc, char **argv)
 {
 	struct event_base *base;
