@@ -11,10 +11,10 @@ CC=cc
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-uhttpd: 
+uhttpd: uhttpd.c
 	$(CC) uhttpd.c -o uhttpd -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttpd
 
-uhttpd2: 
+uhttpd2: uhttpd2.c
 	$(CC) uhttpd2.c -o uhttpd2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -levent
 
 clean:
