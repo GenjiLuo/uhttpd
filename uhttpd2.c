@@ -66,6 +66,8 @@
 #endif
 #endif
 
+#define DEFAULT_PORT     8888
+
 static char value_to_set[512];
 
 static char uri_root[512];
@@ -414,9 +416,9 @@ done:
 }
 
 static void
-syntax(void)
+syntax(char *arg)
 {
-	fprintf(stdout, "Syntax: http-server <docroot>\n");
+	fprintf(stdout, "Syntax: %s <docroot> [port]\n", arg);
 }
 
 int
@@ -426,7 +428,7 @@ main(int argc, char **argv)
 	struct evhttp *http;
 	struct evhttp_bound_socket *handle;
 
-	unsigned short port = 0;
+	unsigned short port = DEFAULT_PORT;
 #ifdef _WIN32
 	WSADATA WSAData;
 	WSAStartup(0x101, &WSAData);
@@ -435,8 +437,12 @@ main(int argc, char **argv)
 		return (1);
 #endif
 	if (argc < 2) {
-		syntax();
+		syntax(argv[0]);
 		return 1;
+	}
+
+	if (argc == 3 && atoi(argv[2])) {
+		port = atoi(argv[2]);
 	}
 
 	base = event_base_new();
