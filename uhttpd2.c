@@ -66,7 +66,9 @@
 #endif
 #endif
 
-char uri_root[512];
+static char value_to_set[512];
+
+static char uri_root[512];
 
 static const struct table_entry {
 	const char *extension;
@@ -163,6 +165,7 @@ dump_request_cb(struct evhttp_request *req, void *arg)
 static void
 set_request_cb(struct evhttp_request *req, void *arg)
 {
+	struct evbuffer *evb = NULL;
 	struct evkeyvalq header;
 	struct evkeyval *kv;
 
@@ -181,16 +184,63 @@ set_request_cb(struct evhttp_request *req, void *arg)
 	// 	kv = kv->next.tqe_next;
 	// }
 
-	evhttp_send_reply(req, 200, "OK", NULL);
+	evb = evbuffer_new();
+
+	const char *key = evhttp_find_header(&header, "key");
+	const char *val = evhttp_find_header(&header, "value");
+	if (key && val) {
+		evbuffer_add_printf(evb,
+				"<!DOCTYPE html>\n"
+				"<html><body>\n"
+				"OK\n"
+				"</body></html>\n"
+				);
+
+		snprintf(value_to_set, sizeof(value_to_set), "%s", val);
+		printf ("Set value=%s\n", value_to_set);
+	} else {
+		evbuffer_add_printf(evb,
+				"<html><body>Invalid parameters!Expect: /set?key=xxx&value=yyy</body></html>"
+				);
+	}
+
+	evhttp_send_reply(req, 200, "OK", evb);
 }
 
 /* Callback used for the /get URI */
 static void
 get_request_cb(struct evhttp_request *req, void *arg)
 {
+	struct evbuffer *evb = NULL;
+	struct evkeyvalq header;
+	struct evkeyval *kv;
+
 	dump_request(req);
 
-	evhttp_send_reply(req, 200, "OK", NULL);
+	TAILQ_INIT(&header);
+	evhttp_parse_query(evhttp_request_get_uri(req), &header);
+	TAILQ_FOREACH(kv, &header, next) {
+		printf("%s: %s\n", kv->key, kv->value);
+	}
+
+	evb = evbuffer_new();
+
+	const char *key = evhttp_find_header(&header, "key");
+	if (key) {
+		evbuffer_add_printf(evb,
+				"<!DOCTYPE html>\n"
+				"<html><body>\n"
+				"value=%s\n"
+				"</body></html>\n",
+				value_to_set
+				);
+	} else {
+		evbuffer_add_printf(evb,
+				"<html><body>Invalid parameters! Expect: /get?key=xxx</body></html>"
+				);
+	}
+
+	evhttp_send_reply(req, 200, "OK", evb);
 }
 
 
@@ -401,6 +451,8 @@ main(int argc, char **argv)
 		fprintf(stderr, "couldn't create evhttp. Exiting.\n");
 		return 1;
 	}
+
+	snprintf(value_to_set, sizeof(value_to_set), "NOT_SET");
 
 	/* The /dump URI will dump all requests to stdout and say 200 ok. */
 	evhttp_set_cb(http, "/dump", dump_request_cb, NULL);
