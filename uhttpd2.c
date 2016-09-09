@@ -66,7 +66,7 @@
 #endif
 #endif
 
-#define DEFAULT_PORT     8888
+#define DEFAULT_PORT     9000
 
 static char value_to_set[512];
 
