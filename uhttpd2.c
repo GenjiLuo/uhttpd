@@ -28,6 +28,7 @@
 #else
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <sys/queue.h>
 #include <signal.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -162,7 +163,23 @@ dump_request_cb(struct evhttp_request *req, void *arg)
 static void
 set_request_cb(struct evhttp_request *req, void *arg)
 {
+	struct evkeyvalq header;
+	struct evkeyval *kv;
+
 	dump_request(req);
+
+	TAILQ_INIT(&header);
+	evhttp_parse_query(evhttp_request_get_uri(req), &header);
+	TAILQ_FOREACH(kv, &header, next) {
+		printf("%s: %s\n", kv->key, kv->value);
+	}
+
+	/* equal to foreach as above */
+	// kv = header->tqh_first;
+	// while (kv) {
+	// 	printf("%s: %s\n", kv->key, kv->value);
+	// 	kv = kv->next.tqe_next;
+	// }
 
 	evhttp_send_reply(req, 200, "OK", NULL);
 }
