@@ -68,13 +68,17 @@
 #endif
 #endif
 
+#define USE_REDIS		1
+
 #define DEFAULT_PORT	9000
 #define REDIS_HOST		"127.0.0.1"
 #define REDIS_PORT		6379
 
 static redisContext *redis_context;
 
+#if !USE_REDIS
 static char value_to_set[512];
+#endif
 
 static char uri_root[512];
 
@@ -201,6 +205,7 @@ set_request_cb(struct evhttp_request *req, void *arg)
 	const char *key = evhttp_find_header(&header, "key");
 	const char *val = evhttp_find_header(&header, "value");
 	if (key && val) {
+#if USE_REDIS
 		evbuffer_add_printf(evb,
 				"<!DOCTYPE html>\n"
 				"<html><body>\n"
@@ -208,8 +213,14 @@ set_request_cb(struct evhttp_request *req, void *arg)
 				"</body></html>\n"
 				);
 
+		 redisReply *reply = redisCommand(redis_context,"SET %s %s", key, val);
+		 if (reply) {
+			 freeReplyObject(reply);
+		 }
+#else
 		snprintf(value_to_set, sizeof(value_to_set), "%s", val);
 		printf ("Set value=%s\n", value_to_set);
+#endif
 	} else {
 		evbuffer_add_printf(evb,
 				"<html><body>Invalid parameters!Expect: /set?key=xxx&value=yyy</body></html>"
@@ -241,13 +252,58 @@ get_request_cb(struct evhttp_request *req, void *arg)
 
 	const char *key = evhttp_find_header(&header, "key");
 	if (key) {
+#if USE_REDIS
+		redisReply *reply = redisCommand(redis_context,"GET %", key);
+		if (reply) {
+			switch (reply->type) {
+				case REDIS_REPLY_STRING:
+					evbuffer_add_printf(evb,
+							"<!DOCTYPE html>\n"
+							"<html><body>\n"
+							"value=%s\n"
+							"</body></html>\n",
+							reply->str
+							);
+					break;
+				case REDIS_REPLY_NIL:
+					evbuffer_add_printf(evb,
+							"<!DOCTYPE html>\n"
+							"<html><body>\n"
+							"value=NO_SET\n"
+							"</body></html>\n"
+							);
+					break;
+				case REDIS_REPLY_ARRAY:
+				case REDIS_REPLY_INTEGER:
+				case REDIS_REPLY_STATUS:
+				case REDIS_REPLY_ERROR:
+				default:
+					evbuffer_add_printf(evb,
+							"<!DOCTYPE html>\n"
+							"<html><body>\n"
+							"value=ERROR\n"
+							"</body></html>\n"
+							);
+					break;
+			}
+			freeReplyObject(reply);
+		} else {
+			evbuffer_add_printf(evb,
+					"<!DOCTYPE html>\n"
+					"<html><body>\n"
+					"value=ERROR\n"
+					"</body></html>\n"
+					);
+		}
+#else
 		evbuffer_add_printf(evb,
 				"<!DOCTYPE html>\n"
 				"<html><body>\n"
 				"value=%s\n"
-				"</body></html>\n",
+				"</body>body></html>html>\n",
 				value_to_set
 				);
+#endif
 	} else {
 		evbuffer_add_printf(evb,
 				"<html><body>Invalid parameters! Expect: /get?key=xxx</body></html>"
@@ -471,13 +527,16 @@ main(int argc, char **argv)
 		goto error;
 	}
 
+#if USE_REDIS
 	redis_context = redisConnect(REDIS_HOST, REDIS_PORT);
 	if (!redis_context) {
 		fprintf(stderr, "Couldn't connect redis. Exiting.\n");
 		goto error;
 	}
 
+#else
 	snprintf(value_to_set, sizeof(value_to_set), "NOT_SET");
+#endif
 
 	/* The /dump URI will dump all requests to stdout and say 200 ok. */
 	evhttp_set_cb(http, "/dump", dump_request_cb, NULL);
@@ -543,9 +602,11 @@ error:
 cleanup:
 	if (handle) {
 	}
+#if USE_REDIS
 	if (redis_context) {
 		redisFree(redis_context);
 	}
+#endif
 	if (http) {
 		evhttp_free(http);
 	}
