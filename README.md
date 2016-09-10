@@ -1,6 +1,6 @@
 # uhttpd
 
-Programming practise for WhosKPW3.
+Programming practise for [WhosKPW3](https://github.com/xilp/muapub/wiki/WhosKPW3).
 - uhttpd  - implemented with `libmicrohttpd`.
 - uhttpd2 - implemented with `libevent`.
 
@@ -18,6 +18,56 @@ $ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-g
 -or-
 $ make clean && make
 ```
+
+## Deployment
+
+### Installing Redis
+
+```
+$ sudo apt-get install build-essential tcl8.5
+$ wget http://download.redis.io/releases/redis-stable.tar.gz
+$ tar xzf redis-stable.tar.gz
+$ cd redis-stable
+$ make
+$ make test
+$ sudo make install
+```
+
+### Installing Redis Service
+
+```
+$ cd redis-stable/utils
+$ sudo ./install_server.sh
+```
+
+### Start Redis
+
+You can start and stop redis with these commands (the number depends on the port you set during the installation. 6379 is the default port setting):
+
+```
+$ sudo service redis_6379 start
+$ sudo service redis_6379 stop
+```
+
+You can then access the redis database by typing the following command:
+
+```
+$ redis-cli
+```
+
+You now have Redis installed and running. The prompt will look like this:
+
+```
+redis 127.0.0.1:6379> 
+```
+
+To set Redis to automatically start at boot, run:
+
+```
+$ sudo update-rc.d redis_6379 defaults
+```
+
+> https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis
 
 ## Test
 
