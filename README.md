@@ -81,8 +81,8 @@ $ sudo update-rc.d redis_6379 defaults
 ## Build
 
 ```
-$ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttpd
-$ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -levent
+$ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -lhiredis
+$ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -lhiredis
 -or-
 $ make clean && make
 ```

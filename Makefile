@@ -8,14 +8,18 @@ target: uhttpd uhttpd2
 
 CC=cc
 
+CFLAGS=-Wall -W -O2 -I/usr/include -I/usr/local/include
+
+LDFLAGS=-L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -lhiredis
+
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 uhttpd: uhttpd.c
-	$(CC) uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttpd
+	$(CC) $< -o $@ $(CFLAGS) $(LDFLAGS)
 
 uhttpd2: uhttpd2.c
-	$(CC) uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -levent
+	$(CC) $< -o $@ $(CFLAGS) $(LDFLAGS)
 
 clean:
 	rm -f *.o uhttpd uhttpd2
