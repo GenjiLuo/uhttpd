@@ -26,6 +26,13 @@ $ tar zxvf v0.13.3.tar.gz
 $ cd hiredis-0.13.3
 $ make
 $ sudo make install
+$ sudo ldconfig
+```
+
+**Remember to run `sudo ldconfig` to update `/etc/ld.so.cache`, or you may encouter following error when run target:**
+
+```
+error while loading shared libraries: libhiredis.so.0.13: cannot open shared object file: No such file or directory
 ```
 
 ### redis
