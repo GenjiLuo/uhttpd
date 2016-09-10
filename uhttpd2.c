@@ -525,6 +525,10 @@ main(int argc, char **argv)
 		fprintf(stderr, "Couldn't connect redis. Exiting.\n");
 		goto error;
 	}
+	if (redis_context->err) {
+		fprintf(stderr, "Connect redis fail: %s. Exiting.\n", redis_context->errstr);
+		goto error;
+	}
 
 #else
 	snprintf(value_to_set, sizeof(value_to_set), "NOT_SET");
