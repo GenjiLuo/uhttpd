@@ -83,6 +83,8 @@ To set Redis to automatically start at boot, run:
 $ sudo update-rc.d redis_6379 defaults
 ```
 
+> http://redis.io/topics/quickstart
+
 > https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis
 
 ## Build
