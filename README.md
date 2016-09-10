@@ -13,8 +13,8 @@ $ sudo apt-get install libmicrohttpd-dev libevent-dev
 ## Build
 
 ```
-$ cc uhttpd.c -o uhttpd -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttpd
-$ cc uhttpd2.c -o uhttpd2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -levent
+$ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttpd
+$ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -levent
 -or-
 $ make clean && make
 ```
