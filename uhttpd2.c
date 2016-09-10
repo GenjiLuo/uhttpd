@@ -430,9 +430,10 @@ syntax(char *arg)
 int
 main(int argc, char **argv)
 {
-	struct event_base *base;
-	struct evhttp *http;
-	struct evhttp_bound_socket *handle;
+	int ret = 0;
+	struct event_base *base = NULL;
+	struct evhttp *http = NULL;
+	struct evhttp_bound_socket *handle = NULL;
 
 	unsigned short port = DEFAULT_PORT;
 #ifdef _WIN32
@@ -440,11 +441,11 @@ main(int argc, char **argv)
 	WSAStartup(0x101, &WSAData);
 #else
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
-		return (1);
+		goto error;
 #endif
 	if (argc < 2) {
 		syntax(argv[0]);
-		return 1;
+		goto error;
 	}
 
 	if (argc == 3 && atoi(argv[2])) {
@@ -454,14 +455,14 @@ main(int argc, char **argv)
 	base = event_base_new();
 	if (!base) {
 		fprintf(stderr, "Couldn't create an event_base: exiting\n");
-		return 1;
+		goto error;
 	}
 
 	/* Create a new evhttp object to handle requests. */
 	http = evhttp_new(base);
 	if (!http) {
 		fprintf(stderr, "couldn't create evhttp. Exiting.\n");
-		return 1;
+		goto error;
 	}
 
 	snprintf(value_to_set, sizeof(value_to_set), "NOT_SET");
@@ -481,7 +482,7 @@ main(int argc, char **argv)
 	if (!handle) {
 		fprintf(stderr, "couldn't bind to port %d. Exiting.\n",
 				(int)port);
-		return 1;
+		goto error;
 	}
 
 	{
@@ -497,7 +498,7 @@ main(int argc, char **argv)
 		memset(&ss, 0, sizeof(ss));
 		if (getsockname(fd, (struct sockaddr *)&ss, &socklen)) {
 			perror("getsockname() failed");
-			return 1;
+			goto error;
 		}
 		if (ss.ss_family == AF_INET) {
 			got_port = ntohs(((struct sockaddr_in*)&ss)->sin_port);
@@ -508,7 +509,7 @@ main(int argc, char **argv)
 		} else {
 			fprintf(stderr, "Weird address family %d\n",
 					ss.ss_family);
-			return 1;
+			goto error;
 		}
 		addr = evutil_inet_ntop(ss.ss_family, inaddr, addrbuf,
 				sizeof(addrbuf));
@@ -518,11 +519,24 @@ main(int argc, char **argv)
 					"http://%s:%d",addr,got_port);
 		} else {
 			fprintf(stderr, "evutil_inet_ntop failed\n");
-			return 1;
+			goto error;
 		}
 	}
 
 	event_base_dispatch(base);
+	goto cleanup;
 
-	return 0;
+error:
+	ret = 1;
+cleanup:
+	if (handle) {
+	}
+	if (http) {
+		evhttp_free(http);
+	}
+	if (base) {
+		event_base_free(base);
+	}
+
+	return ret;
 }
