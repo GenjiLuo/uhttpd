@@ -6,22 +6,31 @@ Programming practise for [WhosKPW3](https://github.com/xilp/muapub/wiki/WhosKPW3
 
 ## Setup
 
-```
-$ sudo apt-get install libmicrohttpd-dev libevent-dev
-```
-
-## Build
+### libmicrohttpd
 
 ```
-$ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttpd
-$ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -levent
--or-
-$ make clean && make
+$ sudo apt-get install libmicrohttpd-dev
 ```
 
-## Deployment
+### libevent
 
-### Installing Redis
+```
+$ sudo apt-get install libevent-dev
+```
+
+### hiredis
+
+```
+$ wget https://github.com/redis/hiredis/archive/v0.13.3.tar.gz
+$ tar zxvf v0.13.3.tar.gz
+$ cd hiredis-0.13.3
+$ make
+$ sudo make install
+```
+
+### redis
+
+#### Installing Redis
 
 ```
 $ sudo apt-get install build-essential tcl8.5
@@ -33,14 +42,14 @@ $ make test
 $ sudo make install
 ```
 
-### Installing Redis Service
+#### Installing Redis Service
 
 ```
 $ cd redis-stable/utils
 $ sudo ./install_server.sh
 ```
 
-### Start Redis
+#### Start Redis
 
 You can start and stop redis with these commands (the number depends on the port you set during the installation. 6379 is the default port setting):
 
@@ -68,6 +77,15 @@ $ sudo update-rc.d redis_6379 defaults
 ```
 
 > https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis
+
+## Build
+
+```
+$ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -lmicrohttpd
+$ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -L /usr/lib/x86_64-linux-gnu/ -levent
+-or-
+$ make clean && make
+```
 
 ## Test
 
