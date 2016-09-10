@@ -90,8 +90,18 @@ $ sudo update-rc.d redis_6379 defaults
 ```
 $ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -lhiredis
 $ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -lhiredis
--or-
+```
+
+Or,
+
+```
 $ make clean && make
+```
+
+To enable DEBUG:
+
+```
+$ DEBUG=1 make
 ```
 
 ## Test
