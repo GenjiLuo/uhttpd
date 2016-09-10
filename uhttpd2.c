@@ -209,26 +209,17 @@ set_request_cb(struct evhttp_request *req, void *arg)
 		 redisReply *reply = redisCommand(redis_context,"SET %s %s", key, val);
 		 if (!reply) {
              evbuffer_add_printf(evb,
-                     "<!DOCTYPE html>\n"
-                     "<html><body>\n"
                      "FAIL\n"
-                     "</body></html>\n"
                      );
 		 } else {
              if (reply->type == REDIS_REPLY_STATUS &&
                          strcasecmp(reply->str,"OK") == 0) {
                  evbuffer_add_printf(evb,
-                         "<!DOCTYPE html>\n"
-                         "<html><body>\n"
                          "OK\n"
-                         "</body></html>\n"
                          );
              } else {
                  evbuffer_add_printf(evb,
-                         "<!DOCTYPE html>\n"
-                         "<html><body>\n"
                          "FAIL\n"
-                         "</body></html>\n"
                          );
              }
              freeReplyObject(reply);
@@ -239,7 +230,7 @@ set_request_cb(struct evhttp_request *req, void *arg)
 #endif
 	} else {
 		evbuffer_add_printf(evb,
-				"<html><body>Invalid parameters!Expect: /set?key=xxx&value=yyy</body></html>"
+				"Invalid parameters!Expect: /set?key=xxx&value=yyy"
 				);
 	}
 
@@ -274,19 +265,13 @@ get_request_cb(struct evhttp_request *req, void *arg)
 			switch (reply->type) {
 				case REDIS_REPLY_STRING:
 					evbuffer_add_printf(evb,
-							"<!DOCTYPE html>\n"
-							"<html><body>\n"
-							"value=%s\n"
-							"</body></html>\n",
+							"value=%s\n",
 							reply->str
 							);
 					break;
 				case REDIS_REPLY_NIL:
 					evbuffer_add_printf(evb,
-							"<!DOCTYPE html>\n"
-							"<html><body>\n"
 							"value=NO_SET\n"
-							"</body></html>\n"
 							);
 					break;
 				case REDIS_REPLY_ARRAY:
@@ -295,34 +280,25 @@ get_request_cb(struct evhttp_request *req, void *arg)
 				case REDIS_REPLY_ERROR:
 				default:
 					evbuffer_add_printf(evb,
-							"<!DOCTYPE html>\n"
-							"<html><body>\n"
 							"value=ERROR\n"
-							"</body></html>\n"
 							);
 					break;
 			}
 			freeReplyObject(reply);
 		} else {
 			evbuffer_add_printf(evb,
-					"<!DOCTYPE html>\n"
-					"<html><body>\n"
 					"value=ERROR\n"
-					"</body></html>\n"
 					);
 		}
 #else
 		evbuffer_add_printf(evb,
-				"<!DOCTYPE html>\n"
-				"<html><body>\n"
-				"value=%s\n"
-				"</body>body></html>html>\n",
+				"value=%s\n",
 				value_to_set
 				);
 #endif
 	} else {
 		evbuffer_add_printf(evb,
-				"<html><body>Invalid parameters! Expect: /get?key=xxx</body></html>"
+				"Invalid parameters! Expect: /get?key=xxx"
 				);
 	}
 
