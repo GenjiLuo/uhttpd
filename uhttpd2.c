@@ -206,17 +206,33 @@ set_request_cb(struct evhttp_request *req, void *arg)
 	const char *val = evhttp_find_header(&header, "value");
 	if (key && val) {
 #if USE_REDIS
-		evbuffer_add_printf(evb,
-				"<!DOCTYPE html>\n"
-				"<html><body>\n"
-				"OK\n"
-				"</body></html>\n"
-				);
-
 		 redisReply *reply = redisCommand(redis_context,"SET %s %s", key, val);
-		 if (reply) {
-			 freeReplyObject(reply);
-		 }
+		 if (!reply) {
+             evbuffer_add_printf(evb,
+                     "<!DOCTYPE html>\n"
+                     "<html><body>\n"
+                     "FAIL\n"
+                     "</body></html>\n"
+                     );
+		 } else {
+             if (reply->type == REDIS_REPLY_STATUS &&
+                         strcasecmp(reply->str,"OK") == 0) {
+                 evbuffer_add_printf(evb,
+                         "<!DOCTYPE html>\n"
+                         "<html><body>\n"
+                         "OK\n"
+                         "</body></html>\n"
+                         );
+             } else {
+                 evbuffer_add_printf(evb,
+                         "<!DOCTYPE html>\n"
+                         "<html><body>\n"
+                         "FAIL\n"
+                         "</body></html>\n"
+                         );
+             }
+             freeReplyObject(reply);
+         }
 #else
 		snprintf(value_to_set, sizeof(value_to_set), "%s", val);
 		printf ("Set value=%s\n", value_to_set);
@@ -253,7 +269,7 @@ get_request_cb(struct evhttp_request *req, void *arg)
 	const char *key = evhttp_find_header(&header, "key");
 	if (key) {
 #if USE_REDIS
-		redisReply *reply = redisCommand(redis_context,"GET %", key);
+		redisReply *reply = redisCommand(redis_context,"GET %s", key);
 		if (reply) {
 			switch (reply->type) {
 				case REDIS_REPLY_STRING:
