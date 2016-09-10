@@ -10,6 +10,11 @@ CC=cc
 
 CFLAGS=-Wall -W -O2 -I/usr/include -I/usr/local/include
 
+# DEBUG option, set before make, eg 'DEBUG=1 make'
+ifeq ($(DEBUG),1)
+	CFLAGS+=-DDEBUG=1
+endif
+
 LDFLAGS=-L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -lhiredis
 
 %.o: %.c

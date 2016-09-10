@@ -70,6 +70,12 @@
 
 #define USE_REDIS		1
 
+#if DEBUG
+#define LOG(fmt, arg...)		printf(fmt, ##arg)
+#else
+#define LOG(fmt, arg...)
+#endif
+
 #define DEFAULT_PORT	9000
 #define REDIS_HOST		"127.0.0.1"
 #define REDIS_PORT		6379
@@ -185,12 +191,14 @@ set_request_cb(struct evhttp_request *req, void *arg)
 
 	(void) arg;
 
+#if DEBUG
 	dump_request(req);
+#endif
 
 	TAILQ_INIT(&header);
 	evhttp_parse_query(evhttp_request_get_uri(req), &header);
 	TAILQ_FOREACH(kv, &header, next) {
-		printf("%s: %s\n", kv->key, kv->value);
+		LOG("%s: %s\n", kv->key, kv->value);
 	}
 
 	/* equal to foreach as above */
@@ -226,7 +234,7 @@ set_request_cb(struct evhttp_request *req, void *arg)
          }
 #else
 		snprintf(value_to_set, sizeof(value_to_set), "%s", val);
-		printf ("Set value=%s\n", value_to_set);
+		LOG ("Set value=%s\n", value_to_set);
 #endif
 	} else {
 		evbuffer_add_printf(evb,
@@ -247,12 +255,14 @@ get_request_cb(struct evhttp_request *req, void *arg)
 
 	(void) arg;
 
+#if DEBUG
 	dump_request(req);
+#endif
 
 	TAILQ_INIT(&header);
 	evhttp_parse_query(evhttp_request_get_uri(req), &header);
 	TAILQ_FOREACH(kv, &header, next) {
-		printf("%s: %s\n", kv->key, kv->value);
+		LOG("%s: %s\n", kv->key, kv->value);
 	}
 
 	evb = evbuffer_new();
@@ -329,12 +339,12 @@ send_document_cb(struct evhttp_request *req, void *arg)
 		return;
 	}
 
-	printf("Got a GET request for <%s>\n",  uri);
+	LOG("Got a GET request for <%s>\n",  uri);
 
 	/* Decode the URI */
 	decoded = evhttp_uri_parse(uri);
 	if (!decoded) {
-		printf("It's not a good URI. Sending BADREQUEST\n");
+		LOG("It's not a good URI. Sending BADREQUEST\n");
 		evhttp_send_error(req, HTTP_BADREQUEST, 0);
 		return;
 	}
@@ -581,7 +591,7 @@ main(int argc, char **argv)
 		addr = evutil_inet_ntop(ss.ss_family, inaddr, addrbuf,
 				sizeof(addrbuf));
 		if (addr) {
-			printf("Listening on %s:%d\n", addr, got_port);
+			fprintf(stdout, "Listening on %s:%d\n", addr, got_port);
 			evutil_snprintf(uri_root, sizeof(uri_root),
 					"http://%s:%d",addr,got_port);
 		} else {
