@@ -157,6 +157,8 @@ dump_request(struct evhttp_request *req)
 static void
 dump_request_cb(struct evhttp_request *req, void *arg)
 {
+	(void) arg;
+
 	dump_request(req);
 
 	evhttp_send_reply(req, 200, "OK", NULL);
@@ -170,6 +172,8 @@ set_request_cb(struct evhttp_request *req, void *arg)
 	struct evbuffer *evb = NULL;
 	struct evkeyvalq header;
 	struct evkeyval *kv;
+
+	(void) arg;
 
 	dump_request(req);
 
@@ -216,6 +220,8 @@ get_request_cb(struct evhttp_request *req, void *arg)
 	struct evbuffer *evb = NULL;
 	struct evkeyvalq header;
 	struct evkeyval *kv;
+
+	(void) arg;
 
 	dump_request(req);
 
