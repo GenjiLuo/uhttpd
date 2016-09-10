@@ -48,6 +48,8 @@
 # endif
 #endif
 
+#include <hiredis/hiredis.h>
+
 #ifdef _WIN32
 #ifndef stat
 #define stat _stat
@@ -66,7 +68,11 @@
 #endif
 #endif
 
-#define DEFAULT_PORT     9000
+#define DEFAULT_PORT	9000
+#define REDIS_HOST		"127.0.0.1"
+#define REDIS_PORT		6379
+
+static redisContext *redis_context;
 
 static char value_to_set[512];
 
@@ -461,7 +467,13 @@ main(int argc, char **argv)
 	/* Create a new evhttp object to handle requests. */
 	http = evhttp_new(base);
 	if (!http) {
-		fprintf(stderr, "couldn't create evhttp. Exiting.\n");
+		fprintf(stderr, "Couldn't create evhttp. Exiting.\n");
+		goto error;
+	}
+
+	redis_context = redisConnect(REDIS_HOST, REDIS_PORT);
+	if (!redis_context) {
+		fprintf(stderr, "Couldn't connect redis. Exiting.\n");
 		goto error;
 	}
 
@@ -530,6 +542,9 @@ error:
 	ret = 1;
 cleanup:
 	if (handle) {
+	}
+	if (redis_context) {
+		redisFree(redis_context);
 	}
 	if (http) {
 		evhttp_free(http);
