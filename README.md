@@ -124,11 +124,11 @@ $ DEBUG=1 make
 
 ```
 # server
-$ ./uhttpd [port] (default 9100)
+$ ./uhttpd [-p port] (default 9100)
 -or-
-$ ./uhttpd2 path/to/page [port] (default 9200)
+$ ./uhttpd2 [-p port] [-f root_dir] (default port 9200 and root_dir '.')
 -or-
-$ ./uhttpd3 [port] (default 9300)
+$ ./uhttpd3 [-p port] [-t num_of_threads] (default port 9300 and num_of_threads 4)
 
 # client
 $ curl http://host_ip_or_name:9x00
