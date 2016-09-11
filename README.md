@@ -148,3 +148,7 @@ $ curl http://host_ip_or_name:9x00/get?key=abc
 - http://www.wangafu.net/~nickm/libevent-2.1/doxygen/html/http_8h.html
 - http://www.wangafu.net/~nickm/libevent-book/
 - http://www.man7.org/linux/man-pages/man3/queue.3.html
+- http://redis.io
+- https://github.com/antirez/redis
+- https://github.com/redis/hiredis
+- https://github.com/ellzey/libevhtp
