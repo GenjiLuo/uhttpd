@@ -4,7 +4,7 @@ FORCE:
 
 .PHONY: FORCE
 
-target: uhttpd uhttpd2
+target: uhttpd uhttpd2 uhttpd3
 
 CC=cc
 
@@ -15,7 +15,7 @@ ifeq ($(DEBUG),1)
 	CFLAGS+=-DDEBUG=1
 endif
 
-LDFLAGS=-L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -lhiredis
+LDFLAGS=-L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -levhtp -lhiredis
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -26,5 +26,8 @@ uhttpd: uhttpd.c
 uhttpd2: uhttpd2.c
 	$(CC) $< -o $@ $(CFLAGS) $(LDFLAGS)
 
+uhttpd3: uhttpd3.c
+	$(CC) $< -o $@ $(CFLAGS) $(LDFLAGS)
+
 clean:
-	rm -f *.o uhttpd uhttpd2
+	rm -f *.o uhttpd uhttpd2 uhttpd3
