@@ -80,9 +80,9 @@
 #define REDIS_HOST		"127.0.0.1"
 #define REDIS_PORT		6379
 
+#if USE_REDIS
 static redisContext *redis_context;
-
-#if !USE_REDIS
+#else
 static char value_to_set[512];
 #endif
 
@@ -270,7 +270,7 @@ get_request_cb(struct evhttp_request *req, void *arg)
 	const char *key = evhttp_find_header(&header, "key");
 	if (key) {
 #if USE_REDIS
-		redisReply *reply = redisCommand(redis_context,"GET %s", key);
+		redisReply *reply = redisCommand(redis_context, "GET %s", key);
 		if (reply) {
 			switch (reply->type) {
 				case REDIS_REPLY_STRING:
