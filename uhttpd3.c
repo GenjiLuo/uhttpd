@@ -49,6 +49,7 @@ static int print_out_key(evhtp_kv_t * kv, void * arg)
 static void
 dump_request(evhtp_request_t *req)
 {
+#if DEBUG
     const char *cmdtype;
 
     switch (req->method) {
@@ -77,6 +78,10 @@ dump_request(evhtp_request_t *req)
     evhtp_query_t *queries = req->uri->query;
     evhtp_kvs_for_each(queries, print_out_key, NULL);
     printf(">>>\n");
+#else
+    (void) req;
+    (void) print_out_key;
+#endif
 }
 
 static void
