@@ -3,7 +3,8 @@
 Programming practise for [WhosKPW3](https://github.com/xilp/muapub/wiki/WhosKPW3).
 - uhttpd  - implemented with `libmicrohttpd` + `redis`.
 - uhttpd2 - implemented with `libevent` + `redis`.
-- uhttpd3 - implemented with `libevent` + `libevhtp` + `redis` in multi-thread and async i/o.
+- uhttpd3 - implemented with `libevent` + `libevhtp` + `redis` in multi-thread and asynchronous i/o.
+- uhttpd4 - implemented with `libevent` + `libevhtp` + `redis` in multi-thread and synchronous i/o.
 
 ## Setup
 
@@ -107,6 +108,7 @@ $ sudo update-rc.d redis_6379 defaults
 $ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -lhiredis
 $ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -levent -lhiredis
 $ cc uhttpd3.c -o uhttpd3 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -levent -levhtp -lhiredis
+$ cc uhttpd4.c -o uhttpd4 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -levent -levhtp -lhiredis
 ```
 
 Or,
@@ -130,6 +132,8 @@ $ ./uhttpd [-p port] (default 9100)
 $ ./uhttpd2 [-p port] [-f root_dir] (default port 9200 and root_dir '.')
 -or-
 $ ./uhttpd3 [-p port] [-t num_of_threads] (default port 9300 and num_of_threads 4)
+-or-
+$ ./uhttpd4 [-p port] [-t num_of_threads] (default port 9400 and num_of_threads 4)
 
 # client
 $ curl http://host_ip_or_name:9x00

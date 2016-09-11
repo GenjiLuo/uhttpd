@@ -4,7 +4,7 @@ FORCE:
 
 .PHONY: FORCE
 
-target: uhttpd uhttpd2 uhttpd3
+target: uhttpd uhttpd2 uhttpd3 uhttpd4
 
 CC=cc
 
@@ -29,5 +29,8 @@ uhttpd2: uhttpd2.c
 uhttpd3: uhttpd3.c
 	$(CC) $< -o $@ $(CFLAGS) $(LDFLAGS)
 
+uhttpd4: uhttpd4.c
+	$(CC) $< -o $@ $(CFLAGS) $(LDFLAGS)
+
 clean:
-	rm -f *.o uhttpd uhttpd2 uhttpd3
+	rm -f *.o uhttpd uhttpd2 uhttpd3 uhttpd4
