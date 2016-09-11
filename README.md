@@ -1,8 +1,9 @@
 # uhttpd
 
 Programming practise for [WhosKPW3](https://github.com/xilp/muapub/wiki/WhosKPW3).
-- uhttpd  - implemented with `libmicrohttpd`.
-- uhttpd2 - implemented with `libevent`.
+- uhttpd  - implemented with `libmicrohttpd` + `redis`.
+- uhttpd2 - implemented with `libevent` + `redis`.
+- uhttpd3 - implemented with `libevent` + `libevhtp` + `redis` in multi-thread and async i/o.
 
 ## Setup
 
