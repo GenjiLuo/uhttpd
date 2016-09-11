@@ -99,7 +99,7 @@ redis_get_cb(redisAsyncContext * redis, void * redis_reply, void * arg)
     evhtp_request_t * req   = arg;
 
     if (reply == NULL || reply->type != REDIS_REPLY_STRING) {
-        evbuffer_add_printf(req->buffer_out, "Redis failure\n");
+        evbuffer_add_printf(req->buffer_out, "NOT_FOUND\n");
     } else {
         evbuffer_add_printf(req->buffer_out,
                 "value=%s\n", reply->str);
@@ -118,7 +118,7 @@ redis_set_cb(redisAsyncContext * redis, void * redis_reply, void * arg)
     evhtp_request_t * req   = arg;
 
     if (reply == NULL || reply->type != REDIS_REPLY_STATUS || strcasecmp(reply->str,"OK")) {
-        evbuffer_add_printf(req->buffer_out, "Redis failure\n");
+        evbuffer_add_printf(req->buffer_out, "FAIL\n");
     } else {
         evbuffer_add_printf(req->buffer_out, "OK\n");
     }
@@ -137,16 +137,26 @@ set_request_cb(evhtp_request_t * req, void * arg)
 
     dump_request(req);
 
-    thread = get_request_thr(req);
-    app    = (struct app *)evthr_get_aux(thread);
+    const char * key = evhtp_kv_find(req->uri->query, "key");
+    const char * val = evhtp_kv_find(req->uri->query, "value");
+    if (key && val) {
+        thread = get_request_thr(req);
+        app    = (struct app *)evthr_get_aux(thread);
 
-    redisAsyncCommand(app->redis,
-            redis_set_cb,
-            (void *)req,
-            "SET %s %s",
-            evhtp_kv_find(req->uri->query, "key"),
-            evhtp_kv_find(req->uri->query, "value")
-            );
+        redisAsyncCommand(app->redis,
+                redis_set_cb,
+                (void *)req,
+                "SET %s %s",
+                key,
+                val
+                );
+        evhtp_request_pause(req);
+    } else {
+        evbuffer_add_printf(req->buffer_out,
+                "Invalid parameters!Expect: /set?key=xxx&value=yyy\n"
+                );
+        evhtp_send_reply(req, EVHTP_RES_OK);
+    }
 
     (void) arg;
 }
@@ -160,14 +170,25 @@ get_request_cb(evhtp_request_t * req, void * arg)
 
     dump_request(req);
 
-    thread = get_request_thr(req);
-    app    = (struct app *)evthr_get_aux(thread);
+    const char *key = evhtp_kv_find(req->uri->query, "key");
 
-    redisAsyncCommand(app->redis,
-            redis_get_cb,
-            (void *)req,
-            "GET %s",
-            evhtp_kv_find(req->uri->query, "key"));
+    if (key) {
+        thread = get_request_thr(req);
+        app    = (struct app *)evthr_get_aux(thread);
+
+        redisAsyncCommand(app->redis,
+                redis_get_cb,
+                (void *)req,
+                "GET %s",
+                key);
+        evhtp_request_pause(req);
+    } else {
+        evbuffer_add_printf(req->buffer_out,
+                "Invalid parameters! Expect: /get?key=xxx\n"
+                );
+        evhtp_send_reply(req, EVHTP_RES_OK);
+    }
+
 
     (void) arg;
 }
