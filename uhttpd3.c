@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include <evhtp.h>
 #include <evthr.h>
@@ -218,13 +219,31 @@ int
 main(int argc, char ** argv)
 {
     int ret = 0;
+    int c = -1;
     uint16_t port = DEFAULT_PORT;
+    uint16_t num_of_threads = 4;
     evbase_t *evbase = event_base_new();
     evhtp_t  *htp    = evhtp_new(evbase, NULL);
     struct app_parent * app_p = calloc(sizeof(struct app_parent), 1);
 
     if (argc == 2 && atoi(argv[1])) {
         port = atoi(argv[1]);
+    }
+
+    while ((c = getopt(argc, argv, "p:t:")) != -1) {
+        switch (c) {
+            case 'p':
+                port = atoi(optarg);
+                break;
+            case 't':
+                num_of_threads = atoi(optarg);
+                break;
+            default:
+                fprintf(stderr,
+                        "Usage: %s [-p port] [-t num_of_threads]\n",
+                        argv[0]);
+                exit(EXIT_FAILURE);
+        }
     }
 
     app_p->evhtp      = htp;
@@ -238,7 +257,7 @@ main(int argc, char ** argv)
     evhtp_set_cb(htp, "/get", get_request_cb, "Get\n");
 
 #ifndef EVHTP_DISABLE_EVTHR
-    evhtp_use_threads(htp, app_init_thread, 4, app_p);
+    evhtp_use_threads(htp, app_init_thread, num_of_threads, app_p);
 #endif
     evhtp_bind_socket(htp, "0.0.0.0", port, 1024);
 
