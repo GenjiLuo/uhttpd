@@ -76,12 +76,12 @@
 #define LOG(fmt, arg...)
 #endif
 
-#define DEFAULT_PORT	9000
+#define DEFAULT_PORT	9200
 #define REDIS_HOST		"127.0.0.1"
 #define REDIS_PORT		6379
 
 #if USE_REDIS
-static redisContext *redis_context;
+static redisContext *redis_context = NULL;
 #else
 static char value_to_set[512];
 #endif

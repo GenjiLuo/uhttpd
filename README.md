@@ -124,14 +124,16 @@ $ DEBUG=1 make
 
 ```
 # server
-$ ./uhttpd [port] (default 8888)
+$ ./uhttpd [port] (default 9100)
 -or-
-$ ./uhttpd2 path/to/page [port] (default 9000)
+$ ./uhttpd2 path/to/page [port] (default 9200)
+-or-
+$ ./uhttpd3 [port] (default 9300)
 
 # client
-$ curl http://host_ip_or_name:8888
-$ curl http://host_ip_or_name:8888/set?key=abc&value=1234
-$ curl http://host_ip_or_name:8888/get?key=abc
+$ curl http://host_ip_or_name:9x00
+$ curl http://host_ip_or_name:9x00/set?key=abc&value=1234
+$ curl http://host_ip_or_name:9x00/get?key=abc
 ```
 
 ## Reference

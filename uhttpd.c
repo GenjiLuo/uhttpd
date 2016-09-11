@@ -17,12 +17,12 @@
 #define LOG(fmt, arg...)
 #endif
 
-#define DEFAULT_PORT    8888
+#define DEFAULT_PORT    9100
 #define REDIS_HOST      "127.0.0.1"
 #define REDIS_PORT      6379
 
 #if USE_REDIS
-static redisContext *redis_context;
+static redisContext *redis_context = NULL;
 #else
 static char value_to_set[512];
 #endif

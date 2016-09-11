@@ -6,7 +6,7 @@
 
 #include <evhtp.h>
 
-#define DEFAULT_PORT	9003
+#define DEFAULT_PORT	9300
 
 static void
 default_cb(evhtp_request_t * req, void *arg)
