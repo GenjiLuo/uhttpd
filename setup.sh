@@ -1,5 +1,8 @@
 #!/bin/bash
 
+mkdir tmp
+pushd tmp
+
 # basic
 echo "Install basic tools..."
 sudo apt-get -y install build-essential wget cmake tcl8.5
@@ -17,7 +20,6 @@ sudo apt-get -y install libevent-dev
 # libevhtp
 
 echo "Install libevthp"
-mkdir tmp && pushd tmp
 wget https://github.com/ellzey/libevhtp/archive/1.2.9.tar.gz
 tar zxvf 1.2.9.tar.gz
 cd libevhtp-1.2.9
@@ -31,7 +33,6 @@ popd
 # hiredis
 
 echo "Install hiredis"
-mkdir tmp && pushd tmp
 wget https://github.com/redis/hiredis/archive/v0.13.3.tar.gz
 tar zxvf v0.13.3.tar.gz
 cd hiredis-0.13.3
@@ -43,7 +44,6 @@ popd
 # redis
 
 echo "Install redis"
-mkdir tmp && pushd tmp
 wget http://download.redis.io/releases/redis-stable.tar.gz
 tar xzf redis-stable.tar.gz
 cd redis-stable
@@ -55,6 +55,7 @@ popd
 
 sudo service redis_6379 start
 
+popd
 rm -fr tmp
 
 echo "Setup done!"
