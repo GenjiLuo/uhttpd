@@ -18,6 +18,19 @@ $ sudo apt-get install libmicrohttpd-dev
 $ sudo apt-get install libevent-dev
 ```
 
+### libevhtp
+
+```
+$ wget https://github.com/ellzey/libevhtp/archive/1.2.10.tar.gz
+$ tar zxvf 1.2.10.tar.gz
+$ cd libevhtp-1.2.10
+$ mkdir build && cd build
+$ cmake .. -DEVHTP_BUILD_SHARED:STRING=ON
+$ make
+$ sudo make install
+$ sudo ldconfig
+```
+
 ### hiredis
 
 ```
@@ -90,8 +103,9 @@ $ sudo update-rc.d redis_6379 defaults
 ## Build
 
 ```
-$ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -lhiredis
-$ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -levent -lhiredis
+$ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -lmicrohttpd -lhiredis
+$ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -levent -lhiredis
+$ cc uhttpd3.c -o uhttpd3 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -levent -levhtp -lhiredis
 ```
 
 Or,
