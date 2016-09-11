@@ -8,24 +8,65 @@
 
 #define DEFAULT_PORT	9300
 
-static void
-default_cb(evhtp_request_t * req, void *arg)
+static int print_out_key(evhtp_kv_t * kv, void * arg)
 {
+    printf("%s : %s\n", kv->key, kv->val);
+
+    (void) arg;
+    return 0;
+}
+
+static void
+dump_request(evhtp_request_t *req)
+{
+    const char *cmdtype;
+
+    switch (req->method) {
+        case htp_method_GET: cmdtype = "GET"; break;
+        case htp_method_POST: cmdtype = "POST"; break;
+        case htp_method_HEAD: cmdtype = "HEAD"; break;
+        case htp_method_PUT: cmdtype = "PUT"; break;
+        case htp_method_DELETE: cmdtype = "DELETE"; break;
+        case htp_method_OPTIONS: cmdtype = "OPTIONS"; break;
+        case htp_method_TRACE: cmdtype = "TRACE"; break;
+        case htp_method_CONNECT: cmdtype = "CONNECT"; break;
+        case htp_method_PATCH: cmdtype = "PATCH"; break;
+        default: cmdtype = "unknown"; break;
+    }
+
+    printf("Received a %s request for %s\n",
+            cmdtype, req->uri->path->full);
+
+    printf("Headers:\n");
+    evhtp_headers_t *headers = req->headers_in;
+    evhtp_kvs_for_each(headers, print_out_key, NULL);
+
+    printf("Queries:\n");
+    evhtp_query_t *queries = req->uri->query;
+    evhtp_kvs_for_each(queries, print_out_key, NULL);
+}
+
+static void
+default_cb(evhtp_request_t * req, void * arg)
+{
+    dump_request(req);
     evbuffer_add_printf(req->buffer_out, "%s", arg ? (const char *)arg : "Null");
     evhtp_send_reply(req, EVHTP_RES_OK);
 }
 
 static void
-set_request_cb(evhtp_request_t *req, void *arg)
+set_request_cb(evhtp_request_t * req, void * arg)
 {
+    dump_request(req);
     evbuffer_add_printf(req->buffer_out, "%s", arg ? (const char *)arg : "Null");
     evhtp_send_reply(req, EVHTP_RES_OK);
 }
 
 /* Callback used for the /get URI */
 static void
-get_request_cb(evhtp_request_t *req, void *arg)
+get_request_cb(evhtp_request_t * req, void * arg)
 {
+    dump_request(req);
     evbuffer_add_printf(req->buffer_out, "%s", arg ? (const char *)arg : "Null");
     evhtp_send_reply(req, EVHTP_RES_OK);
 }
@@ -42,9 +83,9 @@ main(int argc, char ** argv)
         port = atoi(argv[1]);
     }
 
-    evhtp_set_cb(htp, "/", default_cb, "Hello WhosKPW3");
-    evhtp_set_cb(htp, "/set", set_request_cb, "Set");
-    evhtp_set_cb(htp, "/get", get_request_cb, "Get");
+    evhtp_set_cb(htp, "/", default_cb, "Hello WhosKPW3\n");
+    evhtp_set_cb(htp, "/set", set_request_cb, "Set\n");
+    evhtp_set_cb(htp, "/get", get_request_cb, "Get\n");
 #ifndef EVHTP_DISABLE_EVTHR
     evhtp_use_threads(htp, NULL, 4, NULL);
 #endif
