@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # stop running program first of all
-for i in `ps | grep uhttpd | awk '{print $1}'`;
+for i in `ps ax | grep \.\/uhttpd | awk '{print $1}'`;
 do
-    kill -9 $i; 
+    kill -9 $i;
 done
 
 # there's problem to start 'uhttpd' but 'uhttpd2/3' works well
