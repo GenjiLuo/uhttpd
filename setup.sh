@@ -55,8 +55,10 @@ cd redis-stable
 make
 make test
 sudo make install
+cd utils
 ./install_server.sh
-cd -
+sudo update-rc.d redis_6379 defaults
+cd ../..
 
 sudo service redis_6379 start
 
