@@ -144,12 +144,23 @@ return ret;
 int main (int argc, char ** argv)
 {
     int ret = 0;
+    int c = -1;
     struct MHD_Daemon *daemon = NULL;
     uint16_t port = DEFAULT_PORT;
 
-    if (argc == 2 && atoi(argv[1])) {
-        port = atoi(argv[1]);
+    while ((c = getopt(argc, argv, "p:t:")) != -1) {
+        switch (c) {
+            case 'p':
+                port = atoi(optarg);
+                break;
+            default:
+                fprintf(stderr,
+                        "Usage: %s [-p port]\n",
+                        argv[0]);
+                exit(EXIT_FAILURE);
+        }
     }
+
 
 #if USE_REDIS
     redis_context = redisConnect(REDIS_HOST, REDIS_PORT);

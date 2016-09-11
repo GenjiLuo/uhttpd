@@ -226,10 +226,6 @@ main(int argc, char ** argv)
     evhtp_t  *htp    = evhtp_new(evbase, NULL);
     struct app_parent * app_p = calloc(sizeof(struct app_parent), 1);
 
-    if (argc == 2 && atoi(argv[1])) {
-        port = atoi(argv[1]);
-    }
-
     while ((c = getopt(argc, argv, "p:t:")) != -1) {
         switch (c) {
             case 'p':

@@ -485,21 +485,18 @@ done:
 		evbuffer_free(evb);
 }
 
-static void
-syntax(char *arg)
-{
-	fprintf(stdout, "Syntax: %s <docroot> [port]\n", arg);
-}
-
 int
 main(int argc, char **argv)
 {
 	int ret = 0;
+	int c = -1;
+	unsigned short port = DEFAULT_PORT;
+	char *root_dir = ".";
+
 	struct event_base *base = NULL;
 	struct evhttp *http = NULL;
 	struct evhttp_bound_socket *handle = NULL;
 
-	unsigned short port = DEFAULT_PORT;
 #ifdef _WIN32
 	WSADATA WSAData;
 	WSAStartup(0x101, &WSAData);
@@ -507,14 +504,23 @@ main(int argc, char **argv)
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
 		goto error;
 #endif
-	if (argc < 2) {
-		syntax(argv[0]);
-		goto error;
+
+	while ((c = getopt(argc, argv, "p:f:")) != -1) {
+		switch (c) {
+			case 'p':
+				port = atoi(optarg);
+				break;
+			case 'f':
+				root_dir = optarg;
+				break;
+			default:
+				fprintf(stderr,
+						"Usage: %s [-p port] [-f root_dir]\n",
+						argv[0]);
+				exit(EXIT_FAILURE);
+		}
 	}
 
-	if (argc == 3 && atoi(argv[2])) {
-		port = atoi(argv[2]);
-	}
 
 	base = event_base_new();
 	if (!base) {
@@ -552,7 +558,7 @@ main(int argc, char **argv)
 
 	/* We want to accept arbitrary requests, so we need to set a "generic"
 	 * cb.  We can also add callbacks for specific paths. */
-	evhttp_set_gencb(http, send_document_cb, argv[1]);
+	evhttp_set_gencb(http, send_document_cb, root_dir);
 
 	/* Now we tell the evhttp what port to listen on */
 	handle = evhttp_bind_socket_with_handle(http, "0.0.0.0", port);
