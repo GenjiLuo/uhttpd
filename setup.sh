@@ -28,7 +28,6 @@ cmake .. -DEVHTP_BUILD_SHARED:STRING=ON
 make
 sudo make install
 sudo ldconfig
-popd
 
 # hiredis
 
@@ -39,7 +38,6 @@ cd hiredis-0.13.3
 make
 sudo make install
 sudo ldconfig
-popd
 
 # redis
 
@@ -51,7 +49,6 @@ make
 make test
 sudo make install
 ./install_server.sh
-popd
 
 sudo service redis_6379 start
 
