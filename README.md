@@ -8,6 +8,8 @@ Programming practise for [WhosKPW3](https://github.com/xilp/muapub/wiki/WhosKPW3
 
 ## Setup
 
+Simply run `./setup.sh` (you will requred to have **sudo** privilege). Details steps in `setup.sh` as below.
+
 ### libmicrohttpd
 
 ```
