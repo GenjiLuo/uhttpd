@@ -66,6 +66,7 @@ $ make test
 $ sudo make install
 ```
 
+
 #### Installing Redis Service
 
 ```
@@ -103,6 +104,51 @@ $ sudo update-rc.d redis_6379 defaults
 > http://redis.io/topics/quickstart
 
 > https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis
+
+### memcached
+
+```
+$ apt-get install memcached
+
+-or-
+
+$ wget http://www.memcached.org/files/memcached-1.4.31.tar.gz
+$ tar -zxf memcached-1.4.31.tar.gz
+$ cd memcached-1.4.31
+$ ./configure --prefix=/usr/local/memcached
+$ make && make test
+$ sudo make install
+```
+
+Start `memcached` as daemon process:
+
+```
+$ service memcached start
+-or-
+[obsolete]
+$ memcached -d -u nobody -m 1048 -p 11211 127.0.0.1
+```
+
+And ensure memcached is automatically started after each server reboot.
+
+```
+-or-
+[obsolete]
+$ vim /etc/rc.local
+/usr/bin/memcached -d -u nobody -m 1024 -p 11211 127.0.0.1
+```
+
+### libmemcached
+
+```
+$ wget https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
+$ tar zxvf libmemcached-1.0.18.tar.gz
+$ cd libmemcached-1.0.18
+$ ./configure
+$ make
+$ sudo make install
+```
+
 
 ## Build
 
@@ -154,3 +200,6 @@ $ curl http://host_ip_or_name:9x00/get?key=abc
 - https://github.com/antirez/redis
 - https://github.com/redis/hiredis
 - https://github.com/ellzey/libevhtp
+- https://github.com/memcached/memcached/wiki
+- http://docs.libmemcached.org/index.html
+- http://www.ipserverone.info/control-panel/how-to-install-memcached-and-libmemcached/
