@@ -5,6 +5,7 @@ Programming practise for [WhosKPW3](https://github.com/xilp/muapub/wiki/WhosKPW3
 - uhttpd2 - implemented with `libevent` + `redis`.
 - uhttpd3 - implemented with `libevent` + `libevhtp` + `redis` in multi-thread and asynchronous i/o.
 - uhttpd4 - implemented with `libevent` + `libevhtp` + `redis` in multi-thread and synchronous i/o.
+- uhttpd5 - implemented with `libevent` + `libevhtp` + `memcached` in multi-thread and synchronous i/o.
 
 ## Setup
 
