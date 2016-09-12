@@ -62,6 +62,21 @@ cd ../..
 
 sudo service redis_6379 start
 
+# memcached
+
+sudo apt-get install memcached
+sudo service memcached start
+
+# libmemcached
+
+wget https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
+tar zxvf libmemcached-1.0.18.tar.gz
+cd libmemcached-1.0.18
+./configure
+make
+sudo make install
+
+
 # cleanup
 cd $(TOP)
 rm -fr tmp

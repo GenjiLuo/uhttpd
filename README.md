@@ -108,7 +108,7 @@ $ sudo update-rc.d redis_6379 defaults
 ### memcached
 
 ```
-$ apt-get install memcached
+$ sudo apt-get install memcached
 
 -or-
 
@@ -157,6 +157,7 @@ $ cc uhttpd.c -o uhttpd -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr
 $ cc uhttpd2.c -o uhttpd2 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -levent -lhiredis
 $ cc uhttpd3.c -o uhttpd3 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -levent -levhtp -lhiredis
 $ cc uhttpd4.c -o uhttpd4 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -levent -levhtp -lhiredis
+$ cc uhttpd5.c -o uhttpd5 -Wall -W -O2 -I/usr/include -I/usr/local/include -L /usr/lib/x86_64-linux-gnu/ -L /usr/local/lib -levent -levhtp -lmemcached
 ```
 
 Or,
@@ -182,6 +183,8 @@ $ ./uhttpd2 [-p port] [-f root_dir] (default port 9200 and root_dir '.')
 $ ./uhttpd3 [-p port] [-t num_of_threads] (default port 9300 and num_of_threads 4)
 -or-
 $ ./uhttpd4 [-p port] [-t num_of_threads] (default port 9400 and num_of_threads 4)
+-or-
+$ ./uhttpd5 [-p port] [-t num_of_threads] (default port 9500 and num_of_threads 4)
 
 # client
 $ curl http://host_ip_or_name:9x00
