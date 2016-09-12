@@ -218,6 +218,11 @@ main(int argc, char ** argv)
 
     event_base_loop(evbase, 0);
 
+    // Free memcached
+    // How to free memcached in child thread?
+    // FIXME
+    memcached_free(app_p->memc);
+
     evhtp_unbind_socket(htp);
     evhtp_free(htp);
     event_base_free(evbase);
