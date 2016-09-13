@@ -174,6 +174,18 @@ app_init_thread(evhtp_t * htp, evthr_t * thread, void * arg)
     (void) htp;
 }
 
+void
+app_exit_thread(evhtp_t * htp, evthr_t * thread, void * arg)
+{
+    struct app * app;
+
+    app = (struct app *)evthr_get_aux(thread);
+    memcached_free(app->memc);
+
+    (void) htp;
+    (void) arg;
+}
+
 
 int
 main(int argc, char ** argv)
@@ -213,14 +225,18 @@ main(int argc, char ** argv)
 
 #ifndef EVHTP_DISABLE_EVTHR
     evhtp_use_threads(htp, app_init_thread, num_of_threads, app_p);
+    // currently use libevhtp-1.2.9 which not support exit callback right now
+    // evhtp_use_threads_wexit not offically support yet by now (2016-09-11)
+    // wait for libevhtp update to fix the issue.
+    // TODO
+    //evhtp_use_threads_wexit(htp, app_init_thread, app_exit_thread, num_of_threads, app_p);
+    (void) app_exit_thread;
 #endif
     evhtp_bind_socket(htp, "0.0.0.0", port, 1024);
 
     event_base_loop(evbase, 0);
 
     // Free memcached
-    // How to free memcached in child thread?
-    // FIXME
     memcached_free(app_p->memc);
 
     evhtp_unbind_socket(htp);
