@@ -14,3 +14,4 @@ done
 [ -x uhttpd3 ] && ./uhttpd3 2>&1 > /dev/null &
 [ -x uhttpd4 ] && ./uhttpd4 2>&1 > /dev/null &
 [ -x uhttpd5 ] && ./uhttpd5 2>&1 > /dev/null &
+[ -x uhttpd6 ] && ./uhttpd6 2>&1 > /dev/null &
