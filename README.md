@@ -29,7 +29,7 @@ $ sudo apt-get install libevent-dev
 $ wget https://github.com/ellzey/libevhtp/archive/1.2.9.tar.gz
 $ tar zxvf 1.2.9.tar.gz
 $ cd libevhtp-1.2.9
-$ mkdir build && cd build
+$ [ ! -d build ] && mkdir build && cd build
 $ cmake .. -DEVHTP_BUILD_SHARED:STRING=ON
 $ make
 $ sudo make install

@@ -25,7 +25,7 @@ cd $(TOP)/tmp
 wget https://github.com/ellzey/libevhtp/archive/1.2.9.tar.gz
 tar zxvf 1.2.9.tar.gz
 cd libevhtp-1.2.9
-mkdir build
+[ ! -d build ] && mkdir build
 cd build
 cmake .. -DEVHTP_BUILD_SHARED:STRING=ON
 make
